@@ -37,9 +37,15 @@ function onSegmentClick(index: number) {
 export default function Index() {
   return (
     <div>
-      <div className="max-w-md mx-auto py-4">
-        <ColorSelector />
+      <div className="max-w-md mx-auto p-4">
+        <strong>Pick a color...</strong>
+        <div className="mt-2">
+          <ColorSelector />
+        </div>
         <div className="mt-4">
+          <strong>Select a segment...</strong>
+        </div>
+        <div className="mt-2">
           <div className="flex [aspect-ratio:4/3]">
             <MuseumContext.Provider value={{ onSegmentClick }}>
               <Museum />
