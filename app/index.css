@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.segment-button {
+}
+.segment-view {
+  transition: background-color 2s;
+}
+.drop-s {
+  filter: drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.5));
+}

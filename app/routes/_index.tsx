@@ -1,32 +1,74 @@
+import { useStore } from "@nanostores/react";
 import type { MetaFunction } from "@remix-run/node";
+import clsx from "clsx";
+import { ref, serverTimestamp, set } from "firebase/database";
+import { atom } from "nanostores";
+import { colors } from "~/colors";
+import { database } from "~/firebase.client";
+import { Museum, MuseumContext } from "../Museum";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix SPA" },
-    { name: "description", content: "Welcome to Remix (SPA Mode)!" },
+    { title: "a bit of coloring" },
+    { name: "description", content: "a bit of coloring" },
   ];
 };
 
+export const $selectedColor = atom<number | null>(null);
+export const $disabled = atom(false);
+
+function onSegmentClick(index: number) {
+  const colorToSet = $selectedColor.get();
+  if ($disabled.get()) return;
+  if (colorToSet != null) {
+    set(ref(database, `experiments/thai/segments/${index}/color`), {
+      value: colorToSet,
+      timestamp: serverTimestamp(),
+    });
+    if (location.hostname !== "localhostz") {
+      $disabled.set(true);
+      setTimeout(() => {
+        $disabled.set(false);
+      }, 2000);
+    }
+  }
+}
+
 export default function Index() {
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix (SPA Mode)</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/future/spa-mode"
-            rel="noreferrer"
-          >
-            SPA Mode Guide
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
+    <div>
+      <div className="max-w-md mx-auto py-4">
+        <ColorSelector />
+        <div className="mt-4">
+          <div className="flex [aspect-ratio:4/3]">
+            <MuseumContext.Provider value={{ onSegmentClick }}>
+              <Museum />
+            </MuseumContext.Provider>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ColorSelector() {
+  const selectedColor = useStore($selectedColor);
+  const disabled = useStore($disabled);
+  return (
+    <div className={clsx("grid grid-cols-6 gap-2", disabled && "opacity-50")}>
+      {colors.map((color, index) => (
+        <button
+          key={color}
+          className={clsx(
+            "h-12 rounded-md",
+            selectedColor === index && !disabled
+              ? "ring-2 ring-white border-2 border-black/50"
+              : "ring-0"
+          )}
+          style={{ backgroundColor: color }}
+          onClick={() => $selectedColor.set(index)}
+        />
+      ))}
     </div>
   );
 }
