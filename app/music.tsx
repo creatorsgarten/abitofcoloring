@@ -3,9 +3,10 @@ interface BeatData {
   time: number;
   note: number;
 }
+const bpm = 80;
 export const beatData = new Map<number, BeatData>();
 function getCurrentBeat() {
-  return Math.floor(((Date.now() / 1000 / 60) * 100 * 2) % 16);
+  return Math.floor(((Date.now() / 1000 / 60) * bpm * 2) % 16);
 }
 let audioContext: AudioContext | null = null;
 let noteBuffer: AudioBuffer | null = null;
@@ -18,7 +19,7 @@ export function unmute() {
   lpf.frequency.value = 1000;
   lpf.connect(audioContext.destination);
 
-  const url = new URL("../marimba-notes.ogg", import.meta.url).href;
+  const url = new URL("./marimba-notes.ogg", import.meta.url).href;
   fetch(url)
     .then((res) => res.arrayBuffer())
     .then((buffer) => audioContext!.decodeAudioData(buffer))
@@ -46,7 +47,7 @@ export function updateBeat() {
         source.connect(gain);
         gain.connect(lpf!);
         source.start(
-          audioContext.currentTime + ((i * 60) / 100) * 0.75,
+          audioContext.currentTime + ((i * 60) / bpm) * 0.75,
           sampleStart,
           sampleLength
         );

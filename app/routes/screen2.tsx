@@ -11,6 +11,7 @@ import { $scale, $showRef } from "~/showState";
 import { ConfigSwitch } from "../ConfigSwitch";
 import logo from "../bit-logo.png";
 import qr from "../colorme.png";
+import garten from "../garten.svg";
 import museumRef from "../ref/ref.jpeg";
 
 export default function Screen2() {
@@ -50,11 +51,12 @@ export default function Screen2() {
         }}
       />
       <div className="absolute top-[32%] h-[20%] left-[10%] w-[19%]">
-        {/* Blank left */}
+        <ConfigSwitch configKey="leftMode" value="garten">
+          <GartenLogo />
+        </ConfigSwitch>
 
-        {/* Color me text */}
         <ConfigSwitch configKey="leftMode" value="qr">
-          <div className="absolute inset-0 pt-4 transition-opacity duration-200 opacity-100">
+          <div className="absolute inset-0 transition-opacity duration-200 opacity-100">
             <div className="flex items-center gap-5 justify-center">
               <div style={{ width: "32%" }}>
                 <img src={qr} className="max-w-full" alt="" />
@@ -68,12 +70,12 @@ export default function Screen2() {
           </div>
         </ConfigSwitch>
       </div>
-      <div className="absolute top-[32%] h-[12%] right-[40%] left-[40%]">
+      <div className="absolute top-[32%] h-[10%] right-[40%] left-[40%]">
         {/* Blank center */}
 
         {/* Text */}
         <div
-          className="absolute inset-0 bg-no-repeat bg-center bg-contain scale-75"
+          className="absolute inset-0 bg-no-repeat bg-center bg-contain scale-75 -mt-4"
           style={{
             backgroundImage: `url(${logo})`,
           }}
@@ -89,6 +91,10 @@ export default function Screen2() {
 
         <ConfigSwitch configKey="rightMode" value="people">
           <PeopleCount />
+        </ConfigSwitch>
+
+        <ConfigSwitch configKey="rightMode" value="garten">
+          <GartenLogo />
         </ConfigSwitch>
       </div>
     </div>
@@ -181,9 +187,17 @@ function PeopleCount() {
   const presence = useStore(getFirebaseDatabaseQueryStore(dbRef));
   const count = presence.data?.size || 0;
   return (
-    <div className="pt-4 flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <div className="text-7xl font-black">{count}</div>
       <div className="text-xl">People joined</div>
+    </div>
+  );
+}
+
+function GartenLogo() {
+  return (
+    <div className="flex justify-center">
+      <img src={garten} alt="" className="w-[80%]" />
     </div>
   );
 }
