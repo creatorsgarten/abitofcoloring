@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { ref, serverTimestamp, set } from "firebase/database";
 import { atom } from "nanostores";
 import { useEffect } from "react";
+import { ConfigSwitch } from "~/ConfigSwitch";
 import { colors } from "~/colors";
 import { database } from "~/firebase.client";
 import instruments from "~/instruments";
@@ -62,10 +63,12 @@ export default function Index() {
           </div>
         </div>
 
-        <div className="mt-8">
-          <strong>Pick an icon...</strong>
-          <IconPicker />
-        </div>
+        <ConfigSwitch configKey="rightMode" value="icon">
+          <div className="mt-8">
+            <strong>Pick an icon...</strong>
+            <IconPicker />
+          </div>
+        </ConfigSwitch>
       </div>
     </div>
   );

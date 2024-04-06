@@ -6,8 +6,11 @@ import { useEffect, useRef } from "react";
 import { Museum } from "~/Museum";
 import { database } from "~/firebase.client";
 import instruments from "~/instruments";
+import { getFirebaseDatabaseQueryStore } from "~/nanofire";
 import { $scale, $showRef } from "~/showState";
+import { ConfigSwitch } from "../ConfigSwitch";
 import logo from "../bit-logo.png";
+import qr from "../colorme.png";
 import museumRef from "../ref/ref.jpeg";
 
 export default function Screen2() {
@@ -50,18 +53,20 @@ export default function Screen2() {
         {/* Blank left */}
 
         {/* Color me text */}
-        {/* <div className="absolute inset-0 pt-4 transition-opacity duration-200 opacity-100">
-          <div className="flex items-center gap-5 justify-center">
-            <div style={{ width: "32%" }}>
-              <img src={qr} className="max-w-full" />
-            </div>
-            <div className="text-2xl font-bold tracking-wider">
-              SCAN
-              <br />
-              TO COLOR
+        <ConfigSwitch configKey="leftMode" value="qr">
+          <div className="absolute inset-0 pt-4 transition-opacity duration-200 opacity-100">
+            <div className="flex items-center gap-5 justify-center">
+              <div style={{ width: "32%" }}>
+                <img src={qr} className="max-w-full" alt="" />
+              </div>
+              <div className="text-2xl font-bold tracking-wider">
+                SCAN
+                <br />
+                TO COLOR
+              </div>
             </div>
           </div>
-        </div> */}
+        </ConfigSwitch>
       </div>
       <div className="absolute top-[32%] h-[12%] right-[40%] left-[40%]">
         {/* Blank center */}
@@ -78,7 +83,13 @@ export default function Screen2() {
         {/* Blank right */}
 
         {/* Icon */}
-        <CurrentIcon />
+        <ConfigSwitch configKey="rightMode" value="icon">
+          <CurrentIcon />
+        </ConfigSwitch>
+
+        <ConfigSwitch configKey="rightMode" value="people">
+          <PeopleCount />
+        </ConfigSwitch>
       </div>
     </div>
   );
@@ -163,4 +174,16 @@ function CurrentIcon() {
     };
   }, []);
   return <div ref={divRef} />;
+}
+
+function PeopleCount() {
+  const dbRef = ref(database, `experiments/thai/presence`);
+  const presence = useStore(getFirebaseDatabaseQueryStore(dbRef));
+  const count = presence.data?.size || 0;
+  return (
+    <div className="pt-4 flex flex-col items-center justify-center">
+      <div className="text-7xl font-black">{count}</div>
+      <div className="text-xl">People joined</div>
+    </div>
+  );
 }
