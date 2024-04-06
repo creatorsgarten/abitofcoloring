@@ -3,9 +3,10 @@ import clsx from "clsx";
 import { onValue, ref } from "firebase/database";
 import { atom } from "nanostores";
 import { useEffect, useRef } from "react";
-import { Museum } from "~/Museum";
+import { Museum, MuseumContext } from "~/Museum";
 import { database } from "~/firebase.client";
 import instruments from "~/instruments";
+import { noteData, unmute, updateBeat } from "~/music";
 import { getFirebaseDatabaseQueryStore } from "~/nanofire";
 import { $scale, $showRef } from "~/showState";
 import { ConfigSwitch } from "../ConfigSwitch";
@@ -14,7 +15,69 @@ import qr from "../colorme.png";
 import garten from "../garten.svg";
 import museumRef from "../ref/ref.jpeg";
 
+const $beat = atom(-1);
+const $playMusic = atom(false);
+
+const Config: MuseumContext = {
+  renderSegmentChildren: (index, note) => {
+    return <SegmentMusicVisualizer index={index} note={note} />;
+  },
+};
+
+export interface SegmentMusicVisualizer {
+  index: number;
+  note: number | null;
+}
+const noteName = "ซฺ ลฺ ด ร ม ซ ล ดํ รํ มํ ซํ ลํ".split(" ");
+export function SegmentMusicVisualizer(props: SegmentMusicVisualizer) {
+  const beat = useStore($beat);
+  const playing = useStore($playMusic);
+  const divRef = useRef<HTMLDivElement>(null);
+  const note = props.note;
+  useEffect(() => {
+    if (note) noteData.set(props.index - 1, note + 1);
+  }, [note, props.index]);
+  useEffect(() => {
+    if (!playing) return;
+    if (beat + 1 === props.index) {
+      const div = divRef.current;
+      if (div) {
+        div.style.opacity = "0.5";
+        requestAnimationFrame(() => {
+          div.style.transition = "opacity 0.5s";
+          div.style.opacity = "0";
+          setTimeout(() => {
+            div.style.transition = "";
+          }, 1000);
+        });
+      }
+    }
+  }, [beat, props.index, playing]);
+  if (!playing) return null;
+  return (
+    <div
+      className="absolute inset-0 bg-white/50 opacity-0 flex items-center justify-center text-8xl text-black"
+      ref={divRef}
+    >
+      {noteName[note]}
+    </div>
+  );
+}
+
 export default function Screen2() {
+  useEffect(() => {
+    let ended = false;
+    const frame = () => {
+      if (ended) return;
+      $beat.set(updateBeat());
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+    return () => {
+      ended = true;
+    };
+  });
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       console.log(e.key);
@@ -38,8 +101,14 @@ export default function Screen2() {
         "fixed top-0 left-0 w-[1440px] h-[1009px] flex origin-top-left",
         scale ? "scale-x-[1.33334] scale-y-[1.071]" : ""
       )}
+      onDoubleClick={() => {
+        $playMusic.set(true);
+        unmute();
+      }}
     >
-      <Museum />
+      <MuseumContext.Provider value={Config}>
+        <Museum />
+      </MuseumContext.Provider>
       <div
         className={clsx(
           "mix-blend-multiply absolute inset-0 transition-opacity duration-300 z-50 pointer-events-none",
@@ -50,7 +119,7 @@ export default function Screen2() {
           backgroundSize: "100% 100%",
         }}
       />
-      <div className="absolute top-[32%] h-[20%] left-[10%] w-[19%]">
+      <div className="absolute top-[34%] h-[20%] left-[10%] w-[19%]">
         <ConfigSwitch configKey="leftMode" value="garten">
           <GartenLogo />
         </ConfigSwitch>
@@ -70,7 +139,7 @@ export default function Screen2() {
           </div>
         </ConfigSwitch>
       </div>
-      <div className="absolute top-[32%] h-[10%] right-[40%] left-[40%]">
+      <div className="absolute top-[34%] h-[10%] right-[40%] left-[40%]">
         {/* Blank center */}
 
         {/* Text */}
@@ -81,7 +150,7 @@ export default function Screen2() {
           }}
         ></div>
       </div>
-      <div className="absolute top-[32%] h-[20%] right-[10%] w-[19%]">
+      <div className="absolute top-[34%] h-[20%] right-[10%] w-[19%]">
         {/* Blank right */}
 
         {/* Icon */}

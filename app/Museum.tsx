@@ -10,7 +10,10 @@ import arc2 from "./arc2.png";
 
 export interface MuseumContext {
   onSegmentClick?: (index: number) => void;
-  renderSegmentChildren?: (index: number) => React.ReactNode;
+  renderSegmentChildren?: (
+    index: number,
+    value: number | null
+  ) => React.ReactNode;
 }
 export const MuseumContext = createContext<MuseumContext>({});
 
@@ -117,7 +120,9 @@ function Segment(props: Segment) {
         }
       }}
     >
-      {renderSegmentChildren ? renderSegmentChildren(props.index) : null}
+      {renderSegmentChildren
+        ? renderSegmentChildren(props.index, currentColor)
+        : null}
     </Component>
   );
 }

@@ -8,15 +8,17 @@ export const beatData = new Map<number, BeatData>();
 function getCurrentBeat() {
   return Math.floor(((Date.now() / 1000 / 60) * bpm * 2) % 16);
 }
+
 let audioContext: AudioContext | null = null;
 let noteBuffer: AudioBuffer | null = null;
 let lpf: BiquadFilterNode | null = null;
+
 export function unmute() {
   if (audioContext) return;
   audioContext = new AudioContext();
   lpf = audioContext.createBiquadFilter();
   lpf.type = "lowpass";
-  lpf.frequency.value = 1000;
+  lpf.frequency.value = 2000;
   lpf.connect(audioContext.destination);
 
   const url = new URL("./marimba-notes.ogg", import.meta.url).href;
@@ -27,16 +29,19 @@ export function unmute() {
       noteBuffer = audioBuffer;
     });
 }
+
+export const noteData = new Map<number, number>();
+
 export function updateBeat() {
   const currentBeat = getCurrentBeat();
   if (currentBeat !== lastBeat) {
     lastBeat = currentBeat;
-    const note = Math.floor(Math.random() * 12) + 1;
-    beatData.set(currentBeat, {
-      time: Date.now(),
-      note: note,
-    });
-    if (noteBuffer && audioContext) {
+    const note = noteData.get(currentBeat) ?? 0;
+    if (note && noteBuffer && audioContext) {
+      beatData.set(currentBeat, {
+        time: Date.now(),
+        note: note,
+      });
       const sampleStart = (note - 1) * 2;
       const sampleLength = 2;
       for (let i = 0; i < 2; i++) {
@@ -54,4 +59,5 @@ export function updateBeat() {
       }
     }
   }
+  return currentBeat;
 }
