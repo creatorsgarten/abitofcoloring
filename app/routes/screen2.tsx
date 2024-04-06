@@ -59,7 +59,7 @@ export function SegmentMusicVisualizer(props: SegmentMusicVisualizer) {
       className="absolute inset-0 bg-white/50 opacity-0 flex items-center justify-center text-8xl text-black"
       ref={divRef}
     >
-      {noteName[note]}
+      {noteName[note || -1]}
     </div>
   );
 }

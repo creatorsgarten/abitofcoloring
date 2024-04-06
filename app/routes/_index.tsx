@@ -74,23 +74,35 @@ export default function Index() {
   );
 }
 
+const noteName = "ซฺ ลฺ ด ร ม ซ ล ดํ รํ มํ ซํ ลํ".split(" ");
 function ColorSelector() {
   const selectedColor = useStore($selectedColor);
   const disabled = useStore($disabled);
+  const showNote = !!useStore(
+    getFirebaseDatabaseQueryStore(
+      ref(database, `experiments/thai/config/showNote`)
+    )
+  ).data?.val();
   return (
     <div className={clsx("grid grid-cols-6 gap-2", disabled && "opacity-50")}>
       {colors.map((color, index) => (
         <button
           key={color}
           className={clsx(
-            "h-12 rounded-md",
+            "h-12 rounded-md text-xl",
             selectedColor === index && !disabled
               ? "ring-2 ring-white border-2 border-black/50"
               : "ring-0"
           )}
-          style={{ backgroundColor: color }}
+          style={{
+            backgroundColor: color,
+            color:
+              index === 2 || index === 9 || index === 11 ? "black" : "white",
+          }}
           onClick={() => $selectedColor.set(index)}
-        />
+        >
+          {showNote ? noteName[index] : ""}
+        </button>
       ))}
     </div>
   );
