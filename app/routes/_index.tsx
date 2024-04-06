@@ -5,6 +5,7 @@ import { ref, serverTimestamp, set } from "firebase/database";
 import { atom } from "nanostores";
 import { colors } from "~/colors";
 import { database } from "~/firebase.client";
+import instruments from "~/instruments";
 import { Museum, MuseumContext } from "../Museum";
 
 export const meta: MetaFunction = () => {
@@ -25,7 +26,7 @@ function onSegmentClick(index: number) {
       value: colorToSet,
       timestamp: serverTimestamp(),
     });
-    if (location.hostname !== "localhostz") {
+    if (location.hostname !== "localhost") {
       $disabled.set(true);
       setTimeout(() => {
         $disabled.set(false);
@@ -46,11 +47,16 @@ export default function Index() {
           <strong>Select a segment...</strong>
         </div>
         <div className="mt-2">
-          <div className="flex [aspect-ratio:4/3]">
+          <div className="flex [aspect-ratio:1.42]">
             <MuseumContext.Provider value={{ onSegmentClick }}>
               <Museum />
             </MuseumContext.Provider>
           </div>
+        </div>
+
+        <div className="mt-8">
+          <strong>Pick an icon...</strong>
+          <IconPicker />
         </div>
       </div>
     </div>
@@ -73,6 +79,20 @@ function ColorSelector() {
           )}
           style={{ backgroundColor: color }}
           onClick={() => $selectedColor.set(index)}
+        />
+      ))}
+    </div>
+  );
+}
+
+function IconPicker() {
+  return (
+    <div className={clsx("grid grid-cols-6 gap-2")}>
+      {instruments.map((instrument, index) => (
+        <button
+          key={index}
+          className={clsx("h-16 rounded-md bg-contain bg-center bg-no-repeat")}
+          style={{ backgroundImage: `url(${instrument})` }}
         />
       ))}
     </div>

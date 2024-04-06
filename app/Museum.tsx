@@ -10,6 +10,7 @@ import arc2 from "./arc2.png";
 
 export interface MuseumContext {
   onSegmentClick?: (index: number) => void;
+  renderSegmentChildren?: (index: number) => React.ReactNode;
 }
 export const MuseumContext = createContext<MuseumContext>({});
 
@@ -23,12 +24,13 @@ export function Museum() {
           "--window-xw": "322",
           "--above-yw": "289",
           "--below-yw": "727",
-          "--door-yp": "54%",
+          "--door-yp": "50%",
           "--door-s-xp": "15%",
           "--door-l-xp": "0%",
           "--curve-s-ys": "12%",
+          "--curve-s-xp": "8%",
           "--curve-l-ys": "27%",
-          "--curve-ym": "56%",
+          "--curve-ym": "52%",
         } as React.CSSProperties
       }
     >
@@ -41,7 +43,7 @@ export function Museum() {
         </div>
         <div className="relative flex-[--below-yw]">
           <Segment index={8} />
-          <div className="absolute inset-x-[--door-s-xp] bottom-[--curve-ym] h-[--curve-s-ys] drop-s z-10">
+          <div className="absolute inset-x-[--curve-s-xp] bottom-[--curve-ym] h-[--curve-s-ys] drop-s z-10">
             <Segment index={11} mask={arc1} />
           </div>
           <div className="absolute inset-x-[--door-s-xp] bottom-0 h-[--door-yp] drop-s z-10">
@@ -75,7 +77,7 @@ export function Museum() {
         </div>
         <div className="relative flex-[--below-yw]">
           <Segment index={10} />
-          <div className="absolute inset-x-[--door-s-xp] bottom-[--curve-ym] h-[--curve-s-ys] drop-s z-10">
+          <div className="absolute inset-x-[--curve-s-xp] bottom-[--curve-ym] h-[--curve-s-ys] drop-s z-10">
             <Segment index={13} mask={arc1} />
           </div>
           <div className="absolute inset-x-[--door-s-xp] bottom-0 h-[--door-yp] drop-s z-10">
@@ -95,7 +97,7 @@ interface Segment {
 }
 function Segment(props: Segment) {
   const currentColor = useCurrentColor(props.index);
-  const { onSegmentClick } = useContext(MuseumContext);
+  const { onSegmentClick, renderSegmentChildren } = useContext(MuseumContext);
   const Component = onSegmentClick != null ? "button" : "div";
   return (
     <Component
@@ -114,7 +116,9 @@ function Segment(props: Segment) {
           onSegmentClick(props.index);
         }
       }}
-    />
+    >
+      {renderSegmentChildren ? renderSegmentChildren(props.index) : null}
+    </Component>
   );
 }
 function useCurrentColor(index: number) {
