@@ -1,8 +1,10 @@
 import { useStore } from "@nanostores/react";
 import clsx from "clsx";
+import { onValue, ref } from "firebase/database";
 import { atom } from "nanostores";
 import { useEffect, useRef } from "react";
 import { Museum } from "~/Museum";
+import { database } from "~/firebase.client";
 import instruments from "~/instruments";
 import { $scale, $showRef } from "~/showState";
 import logo from "../bit-logo.png";
@@ -84,12 +86,17 @@ export default function Screen2() {
 
 export const $currentIcon = atom({ index: 24 });
 
-setInterval(() => {
-  $currentIcon.set({ index: Math.floor(Math.random() * 24) + 1 });
-}, 1000);
-
 function CurrentIcon() {
   const divRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const iconRef = ref(database, `experiments/thai/icon`);
+    const unsubscribe = onValue(iconRef, (snapshot) => {
+      const val = snapshot.val();
+      const index = val ? val.index : 24;
+      $currentIcon.set({ index });
+    });
+    return unsubscribe;
+  }, []);
   useEffect(() => {
     let canceled = false;
     let lastImage: HTMLImageElement | undefined;

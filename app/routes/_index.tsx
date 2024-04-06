@@ -3,9 +3,11 @@ import type { MetaFunction } from "@remix-run/node";
 import clsx from "clsx";
 import { ref, serverTimestamp, set } from "firebase/database";
 import { atom } from "nanostores";
+import { useEffect } from "react";
 import { colors } from "~/colors";
 import { database } from "~/firebase.client";
 import instruments from "~/instruments";
+import { getFirebaseDatabaseQueryStore } from "~/nanofire";
 import { Museum, MuseumContext } from "../Museum";
 
 export const meta: MetaFunction = () => {
@@ -36,6 +38,12 @@ function onSegmentClick(index: number) {
 }
 
 export default function Index() {
+  useEffect(() => {
+    const id = (localStorage.thaitunesId ??=
+      Date.now() + "-" + Math.random().toString(36).slice(2));
+    const presenceRef = ref(database, `experiments/thai/presence/${id}`);
+    set(presenceRef, serverTimestamp());
+  }, []);
   return (
     <div>
       <div className="max-w-md mx-auto p-4">
@@ -86,13 +94,25 @@ function ColorSelector() {
 }
 
 function IconPicker() {
+  const iconRef = ref(database, `experiments/thai/icon/index`);
+  const iconSnapshot = useStore(getFirebaseDatabaseQueryStore(iconRef));
+  const currentIndex = iconSnapshot.data?.val() ?? 0;
   return (
     <div className={clsx("grid grid-cols-6 gap-2")}>
       {instruments.map((instrument, index) => (
         <button
           key={index}
-          className={clsx("h-16 rounded-md bg-contain bg-center bg-no-repeat")}
+          className={clsx(
+            "h-16 rounded-md bg-contain bg-center bg-no-repeat",
+            currentIndex === index + 1 ? "bg-gray-700" : ""
+          )}
           style={{ backgroundImage: `url(${instrument})` }}
+          onClick={() => {
+            set(ref(database, `experiments/thai/icon`), {
+              index: index + 1,
+              timestamp: serverTimestamp(),
+            });
+          }}
         />
       ))}
     </div>
