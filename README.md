@@ -30,3 +30,18 @@ This project took me ([@dtinth](https://github.com/dtinth)) about 6 hours to mak
 - **Nano Stores** for state management. It’s easy to use and doesn’t get in the way.
 
 - **Tailwind CSS** for styling. It helps me to iterate very quickly on the visual aspects of the project.
+
+- **Figma** for creating image assets and measuring the sizes and positions of elements.
+
+This is a screenshot of my Figma file at the end of the project:
+
+<img width="943" alt="image" src="https://github.com/creatorsgarten/abitofcoloring/assets/193136/71c80990-0da1-4e75-a963-b7fa7e6ebdcb">
+
+## Projection
+
+[Museum Siam’s Wikipedia page](<https://en.wikipedia.org/wiki/Museum_Siam#/media/File:Museum_Siam_(III).jpg>) has a photo of the facade. The first thing I did when creating the scene was to create a debug mode (toggled with a shortcut key) that would overlay the facade image on top of the visuals (using [mix-blend-mode](https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode), simulating a projector). This helped me to align the visuals with the facade. This debug mode would later becoming useful when performing the final alignment on the actual facade as it helps projectionist to adjust the projector without having to guess where the visuals should be.
+
+<!-- prettier-ignore -->
+| Debugging off | Debugging on |
+| ------------- | ------------ |
+| ![debug-off](https://github.com/creatorsgarten/abitofcoloring/assets/193136/8d605fdf-30dc-4a38-8bd5-d12789da090b) | ![debug-on](https://github.com/creatorsgarten/abitofcoloring/assets/193136/778df542-653f-4bac-85dd-a4e435de3e2f) |
