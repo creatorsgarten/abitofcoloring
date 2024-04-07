@@ -19,7 +19,7 @@ https://github.com/creatorsgarten/abitofcoloring/assets/193136/a9ad6b9b-63d5-440
 
 This project took me ([@dtinth](https://github.com/dtinth)) about 6 hours to make. It was created on the same day as its premiere. Without these tools, this project would not have been possible in such a short time frame:
 
-- **Firebase Realtime Database** for the backend. This saves a lot of time as this project is implemented entirely on the client-side, with no server-side code. Firebase SDK also manages unreliable internet connections and conflicting updates, which would otherwise require significant effort to implement manually using WebSockets.
+- **Firebase Realtime Database** for the backend. This saves a lot of time as this project is implemented entirely on the client-side, with no server-side code. Firebase SDK also manages auto-reconnection (on unreliable internet connections) and conflicting updates, which would otherwise require significant effort to implement manually using WebSockets.
 
 - **GitHub Copilot** for AI-assisted code completions. [GitHub Copilot completed most of my code.](https://twitter.com/dtinth/status/1639152753040834560) When I want to do something, I already know the high-level details, but I didn’t remember the exact API signature. Without Copilot, it would cost a lot of time having to look up the correct API signature in the docs. For example, I entered `const lpf =`, and it knows I need a low-pass filter, so it completed the remaining code: `const lpf = ctx.createBiquadFilter(); lpf.type = 'lowpass';`.
 
