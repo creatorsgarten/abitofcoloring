@@ -1,4 +1,4 @@
-# abitofthaitunes-interactive
+# a bit of coloring
 
 In [_a bit of thai tunes_](https://www.facebook.com/creatorsgarten/videos/1695835374279309), an algorave event at [Museum Siam](https://en.wikipedia.org/wiki/Museum_Siam) that featured algorithmic art and live coding, with visuals projected onto the museum’s facade, we implemented an interactive experiment that allowed visitors to color the museum facade using their mobile phones.
 
@@ -10,6 +10,8 @@ In [_a bit of thai tunes_](https://www.facebook.com/creatorsgarten/videos/169583
 This show has 3 phases.
 
 In the first phase, visitors are invited to color the museum facade.
+
+https://github.com/creatorsgarten/abitofcoloring/assets/193136/3552ca4f-cbb7-428f-95a1-21a2f3227af3
 
 In the second phase, visitors can choose an icon to show. The previously-selected icon will pop out.
 
