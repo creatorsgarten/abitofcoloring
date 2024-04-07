@@ -26,7 +26,7 @@ export function Museum() {
           "--pillar-xw": "118",
           "--window-xw": "322",
           "--above-yw": "289",
-          "--below-yw": "727",
+          "--below-yw": "777",
           "--door-yp": "50%",
           "--door-s-xp": "15%",
           "--door-l-xp": "0%",
@@ -99,6 +99,12 @@ interface Segment {
   mask?: string;
 }
 function Segment(props: Segment) {
+  const allowColorSelection =
+    useStore(
+      getFirebaseDatabaseQueryStore(
+        ref(database, "experiments/thai/config/allowColorSelection")
+      )
+    ).data?.val() ?? true;
   const currentColor = useCurrentColor(props.index);
   const { onSegmentClick, renderSegmentChildren } = useContext(MuseumContext);
   const Component = onSegmentClick != null ? "button" : "div";
@@ -109,7 +115,11 @@ function Segment(props: Segment) {
         onSegmentClick ? "segment-button" : "segment-view"
       )}
       style={{
-        backgroundColor: currentColor != null ? colors[currentColor] : "gray",
+        backgroundColor: allowColorSelection
+          ? currentColor != null
+            ? colors[currentColor]
+            : "gray"
+          : "black",
         ...(props.mask
           ? { maskImage: `url(${props.mask})`, maskSize: "100% 100%" }
           : {}),

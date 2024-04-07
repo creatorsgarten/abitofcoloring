@@ -1,7 +1,7 @@
 import { useStore } from "@nanostores/react";
 import clsx from "clsx";
 import { onValue, ref } from "firebase/database";
-import { atom } from "nanostores";
+import { atom, onMount } from "nanostores";
 import { useEffect, useRef } from "react";
 import { Museum, MuseumContext } from "~/Museum";
 import { database } from "~/firebase.client";
@@ -9,10 +9,12 @@ import instruments from "~/instruments";
 import { noteData, unmute, updateBeat } from "~/music";
 import { getFirebaseDatabaseQueryStore } from "~/nanofire";
 import { $scale, $showRef } from "~/showState";
+import { thanks } from "~/thanks";
 import { ConfigSwitch } from "../ConfigSwitch";
 import logo from "../bit-logo.png";
 import qr from "../colorme.png";
 import garten from "../garten.svg";
+import oneLine from "../logo-oneline.svg";
 import museumRef from "../ref/ref.jpeg";
 
 const $beat = atom(-1);
@@ -28,7 +30,6 @@ export interface SegmentMusicVisualizer {
   index: number;
   note: number | null;
 }
-const noteName = "ซฺ ลฺ ด ร ม ซ ล ดํ รํ มํ ซํ ลํ".split(" ");
 export function SegmentMusicVisualizer(props: SegmentMusicVisualizer) {
   const beat = useStore($beat);
   const playing = useStore($playMusic);
@@ -42,7 +43,7 @@ export function SegmentMusicVisualizer(props: SegmentMusicVisualizer) {
     if (beat + 1 === props.index) {
       const div = divRef.current;
       if (div) {
-        div.style.opacity = "0.5";
+        div.style.opacity = "0.9";
         requestAnimationFrame(() => {
           div.style.transition = "opacity 0.5s";
           div.style.opacity = "0";
@@ -59,7 +60,7 @@ export function SegmentMusicVisualizer(props: SegmentMusicVisualizer) {
       className="absolute inset-0 bg-white/50 opacity-0 flex items-center justify-center text-8xl text-black"
       ref={divRef}
     >
-      {noteName[note || -1]}
+      {/* {noteName[note || -1]} */}
     </div>
   );
 }
@@ -124,13 +125,21 @@ export default function Screen2() {
           <GartenLogo />
         </ConfigSwitch>
 
+        <ConfigSwitch configKey="leftMode" value="people">
+          <PeopleCount />
+        </ConfigSwitch>
+
+        <ConfigSwitch configKey="leftMode" value="thanks">
+          <Thanks offset={0} />
+        </ConfigSwitch>
+
         <ConfigSwitch configKey="leftMode" value="qr">
           <div className="absolute inset-0 transition-opacity duration-200 opacity-100">
             <div className="flex items-center gap-5 justify-center">
               <div style={{ width: "32%" }}>
                 <img src={qr} className="max-w-full" alt="" />
               </div>
-              <div className="text-2xl font-bold tracking-wider">
+              <div className="text-xl font-bold tracking-wider">
                 SCAN
                 <br />
                 TO COLOR
@@ -143,12 +152,14 @@ export default function Screen2() {
         {/* Blank center */}
 
         {/* Text */}
-        <div
-          className="absolute inset-0 bg-no-repeat bg-center bg-contain scale-75 -mt-4"
-          style={{
-            backgroundImage: `url(${logo})`,
-          }}
-        ></div>
+        <ConfigSwitch configKey="bigGarten" value="hide">
+          <div
+            className="absolute inset-0 bg-no-repeat bg-center bg-contain scale-75 -mt-4"
+            style={{
+              backgroundImage: `url(${logo})`,
+            }}
+          ></div>
+        </ConfigSwitch>
       </div>
       <div className="absolute top-[34%] h-[20%] right-[10%] w-[19%]">
         {/* Blank right */}
@@ -162,10 +173,26 @@ export default function Screen2() {
           <PeopleCount />
         </ConfigSwitch>
 
+        <ConfigSwitch configKey="rightMode" value="thanks">
+          <Thanks offset={1} />
+        </ConfigSwitch>
+
         <ConfigSwitch configKey="rightMode" value="garten">
           <GartenLogo />
         </ConfigSwitch>
       </div>
+
+      <ConfigSwitch configKey="bigGarten" value="show">
+        <div
+          className="absolute top-[32%] inset-x-[10%] z-[9999]"
+          style={{
+            filter:
+              "drop-shadow(3px 3px 10px #0005) drop-shadow(0 0 7px #0005) drop-shadow(0 0 2px #0005)",
+          }}
+        >
+          <img src={oneLine} alt="" className="w-full" />
+        </div>
+      </ConfigSwitch>
     </div>
   );
 }
@@ -186,13 +213,22 @@ function CurrentIcon() {
   useEffect(() => {
     let canceled = false;
     let lastImage: HTMLImageElement | undefined;
+    let lastNum: HTMLDivElement | undefined;
     const setImage = (img: HTMLImageElement) => {
       const div = divRef.current;
       if (!div) return;
       if (canceled) return;
       div.appendChild(img);
       clearOldImage();
+      const iconNumber = (+localStorage.iconNumber || 1) + 1;
+      localStorage.iconNumber = iconNumber;
+      const num = document.createElement("div");
+      num.textContent = iconNumber.toString();
+      num.className =
+        "absolute -top-10 right-0 text-4xl text-white font-[monospace] [text-shadow:2px_2px_4px_black]";
+      div.appendChild(num);
       lastImage = img;
+      lastNum = num;
     };
     const eject = (img: HTMLImageElement) => {
       let x = 0;
@@ -203,23 +239,25 @@ function CurrentIcon() {
       const vrx = Math.random() * 2 - 1;
       const vry = Math.random() * 2 - 1;
       const vrz = Math.random() * 2 - 1;
+      const animRate = 1;
 
       const theta = (Math.random() * Math.PI) / 2 + Math.PI / 4;
-      const vx = Math.cos(theta) * 48;
-      let vy = Math.sin(theta) * -24;
+      const go = 16 + Math.random() * 48;
+      const vx = Math.cos(theta) * go;
+      let vy = Math.sin(theta) * -go;
       let hp = 100;
       const frame = () => {
-        hp--;
+        hp -= animRate;
         if (hp < 0) {
           img.remove();
           return;
         }
-        x += vx;
-        y += vy;
-        vy += 2;
-        rx += vrx * 0.1;
-        ry += vry * 0.1;
-        rz += vrz * 0.1;
+        x += vx * animRate;
+        y += vy * animRate;
+        vy += 2 * animRate;
+        rx += vrx * 0.1 * animRate;
+        ry += vry * 0.1 * animRate;
+        rz += vrz * 0.1 * animRate;
         img.style.transform = `translate3d(${x}px, ${y}px, 0) rotateX(${rx}rad) rotateY(${ry}rad) rotateZ(${rz}rad)`;
         requestAnimationFrame(frame);
       };
@@ -227,6 +265,9 @@ function CurrentIcon() {
       requestAnimationFrame(frame);
     };
     const clearOldImage = () => {
+      if (lastNum) {
+        lastNum.remove();
+      }
       if (!lastImage) {
         return;
       }
@@ -236,7 +277,7 @@ function CurrentIcon() {
     const unsubscribe = $currentIcon.subscribe((icon) => {
       const img = new Image();
       img.style.filter = "drop-shadow(0 0 10px black)";
-      img.className = "absolute top-0 left-0 w-full h-full object-contain";
+      img.className = "absolute -top-12 left-0 w-full h-full object-contain";
       img.onload = () => {
         setImage(img);
       };
@@ -268,5 +309,33 @@ function GartenLogo() {
     <div className="flex justify-center">
       <img src={garten} alt="" className="w-[80%]" />
     </div>
+  );
+}
+
+export interface Thanks {
+  offset: number;
+}
+
+const $cycle = atom(0);
+onMount($cycle, () => {
+  const interval = setInterval(() => {
+    $cycle.set($cycle.get() + 1);
+  }, 2000);
+  return () => clearInterval(interval);
+});
+
+export function Thanks(props: Thanks) {
+  const cycle = useStore($cycle);
+  const offset = props.offset;
+  const img = thanks[(cycle * 2 + offset) % thanks.length];
+  return (
+    <div
+      className="absolute inset-0 bg-contain bg-no-repeat bg-center transition-all duration-300 -translate-y-12"
+      style={{
+        backgroundImage: `url(${img})`,
+        filter:
+          "drop-shadow(3px 3px 10px #000c) drop-shadow(0 0 7px #000c) drop-shadow(0 0 2px #000c)",
+      }}
+    />
   );
 }

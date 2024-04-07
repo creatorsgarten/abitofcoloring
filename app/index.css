@@ -5,7 +5,7 @@
 .segment-button {
 }
 .segment-view {
-  transition: background-color 2s;
+  transition: background-color 0.5s;
 }
 .drop-s {
   filter: drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.5));
