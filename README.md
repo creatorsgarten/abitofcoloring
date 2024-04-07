@@ -39,9 +39,13 @@ This is a screenshot of my Figma file at the end of the project:
 
 ## Projection
 
-[Museum Siam’s Wikipedia page](<https://en.wikipedia.org/wiki/Museum_Siam#/media/File:Museum_Siam_(III).jpg>) has a photo of the facade. The first thing I did when creating the scene was to create a debug mode (toggled with a shortcut key) that would overlay the facade image on top of the visuals (using [mix-blend-mode](https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode), simulating a projector). This helped me to align the visuals with the facade. This debug mode would later becoming useful when performing the final alignment on the actual facade as it helps projectionist to adjust the projector without having to guess where the visuals should be.
+[Museum Siam’s Wikipedia page](<https://en.wikipedia.org/wiki/Museum_Siam#/media/File:Museum_Siam_(III).jpg>) has a photo of the facade. The first thing I did when creating the scene was to create a debug mode (toggled with a shortcut key) that would overlay the facade image on top of the visuals (using [mix-blend-mode](https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode), simulating a projector). This step helped me get visual alignment with the facade. This debug mode later became useful when aligning visuals on the actual facade. It helps the projectionist adjust the projector without having to guess where the visuals should be.
 
 <!-- prettier-ignore -->
 | Debugging off | Debugging on |
 | ------------- | ------------ |
 | ![debug-off](https://github.com/creatorsgarten/abitofcoloring/assets/193136/8d605fdf-30dc-4a38-8bd5-d12789da090b) | ![debug-on](https://github.com/creatorsgarten/abitofcoloring/assets/193136/778df542-653f-4bac-85dd-a4e435de3e2f) |
+
+The projector accepts a 1920x1080 (16:9) signal via HDMI, however, the facade has a different aspect ratio of 36:25. The projector squishes the image to fit the facade. To compensate for this, my visuals have to be stretched to 1920x1080. This is done using CSS transforms.
+
+<img width="556" alt="image" src="https://github.com/creatorsgarten/abitofcoloring/assets/193136/85d2138d-2ac6-433b-91b7-37d9a57f6188">
