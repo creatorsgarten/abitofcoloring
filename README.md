@@ -28,3 +28,5 @@ This project took me ([@dtinth](https://github.com/dtinth)) about 6 hours to mak
 - **Vite** for a remarkable hot-reloading experience, tightening the feedback loop.
 
 - **Nano Stores** for state management. It’s easy to use and doesn’t get in the way.
+
+- **Tailwind CSS** for styling. It helps me to iterate very quickly on the visual aspects of the project.
